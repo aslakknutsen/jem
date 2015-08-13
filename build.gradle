@@ -26,8 +26,8 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.5.4'
 
     /* shrinkwrap is used for digging into archives */
-    compile "org.jboss.shrinkwrap:shrinkwrap-bom:1.2.2+"
-    compile "org.jboss.shrinkwrap:shrinkwrap-depchain:1.2.2+"
+    compile "org.jboss.shrinkwrap:shrinkwrap-bom:1.2.3+"
+    compile "org.jboss.shrinkwrap:shrinkwrap-depchain:1.2.3+"
 
     codenarc "org.codenarc:CodeNarc:0.24"
 

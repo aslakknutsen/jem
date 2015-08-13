@@ -1,13 +1,12 @@
 package com.github.jrubygradle.jem.internal
 
 import org.jboss.shrinkwrap.api.ArchiveFormat
-import org.jboss.shrinkwrap.api.ArchivePath
 import org.jboss.shrinkwrap.api.GenericArchive
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.Node
+import org.jboss.shrinkwrap.api.Filters
 import org.jboss.shrinkwrap.api.exporter.ExplodedExporter
 import org.jboss.shrinkwrap.api.importer.TarImporter
-import org.jboss.shrinkwrap.impl.base.io.IOUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -144,7 +143,8 @@ class GemInstaller {
         File outputDir = new File(installDir, 'gems')
         outputDir.mkdirs()
 
-        dataTarGz.as(ExplodedExporter.class).exportExploded(outputDir, gemFullName(gem))
+        dataTarGz.filter(Filters.includePaths(gem.files))
+                .as(ExplodedExporter.class).exportExploded(outputDir, gemFullName(gem))
     }
 
     /** Extract the executables from the specified bindir */
@@ -158,12 +158,8 @@ class GemInstaller {
         List<String> execs = gem.executables.collect { String ex -> [binDir, ex].join(File.separator) }
 
         bin.mkdirs()
-        dataTarGz.content.each { ArchivePath path, Node node ->
-            execs.each { String exec ->
-                if (path.get().matches(/.*${exec}/)) {
-                    IOUtil.copy(node.asset.openStream(), (new File(installDir, exec)).newOutputStream())
-                }
-            }
-        }
+
+        dataTarGz.filter(Filters.includePaths(execs))
+            .as(ExplodedExporter.class).exportExplodedInto(installDir)
     }
 }
